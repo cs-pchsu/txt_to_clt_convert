@@ -38,7 +38,7 @@
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("PMingLiU", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.button1.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.button1.Location = new System.Drawing.Point(348, 100);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(298, 67);
@@ -58,7 +58,7 @@
             // 
             // button2
             // 
-            this.button2.Font = new System.Drawing.Font("PMingLiU", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.button2.Font = new System.Drawing.Font("新細明體", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.button2.Location = new System.Drawing.Point(348, 25);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(298, 69);
@@ -113,7 +113,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "txt to clt (MvQdict)";
+            this.Text = "convert_article_to_voc_list (MvQdict)";
             this.ResumeLayout(false);
             this.PerformLayout();
 

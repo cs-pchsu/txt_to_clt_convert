@@ -45,7 +45,7 @@ namespace convert_article_to_voc_list
         {
             InitializeComponent();
             LinkLabel.Link link = new LinkLabel.Link();
-            link.LinkData = "http://pchsu-blog.blogspot.tw/2016/05/clt.html";
+            link.LinkData = "http://pchsu-blog.blogspot.tw/2017/05/blog-post.html";
             linkLabel1.Links.Add(link);
             folder_init();
             textBox3.Text = default_max_element.ToString();
@@ -106,10 +106,11 @@ namespace convert_article_to_voc_list
                 bool is_error = false;
                 try
                 {
+                    List<string> pure_list;
+                    pure_list = handle_complex_artical_to_pure_list(input_file);
                     List<voc_object> voc_source = new List<voc_object>();
-                    string strip_file_name = Path.GetFileNameWithoutExtension(input_file);
-                    file_to_list(input_file, voc_source);
-                    split_write_to_mvq(out_clt_folder + "/" + strip_file_name, voc_source);
+                    pure_list_to_voc_list(pure_list, voc_source);;
+                    split_write_to_mvq(out_clt_folder + "/" + Path.GetFileNameWithoutExtension(input_file), voc_source);
                 }
                 catch(Exception e)
                 {
@@ -191,6 +192,85 @@ namespace convert_article_to_voc_list
                         context = voc;
 
                     voc_source.Add(new voc_object(voc, DateTime.Now.ToString("yyyy'/'MM'/'dd"), context, 0));
+                }
+            }
+        }
+
+        private List<string> leave_the_valid_char(string[] complex_line)
+        {
+            List<string> line_with_valid_char = new List<string>();
+            foreach (string messyText in complex_line)
+            {
+                string pure = Regex.Replace(messyText, @"[^a-zA-Z\s\x2C\x2D]", "").Trim();
+                if(pure.Length > 0)
+                    line_with_valid_char.Add(pure);
+            }
+
+            return line_with_valid_char;
+        }
+
+        private List<string> split_to_single_word(List<string> multi_words)
+        {
+            List<string> line_with_single_word = new List<string>();
+            foreach (string messyText in multi_words)
+            {
+                string[] delimiter = new string[] { " ", ",", "\t"};
+                string[] tokens = messyText.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+                foreach(string s in tokens)
+                    line_with_single_word.Add(s);
+            }
+
+            return line_with_single_word;
+        }
+
+        private List<string> remove_the_duplicate_word(List<string> duplicate_words)
+        {
+            List<string> noDupes = duplicate_words.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList();
+            return noDupes;
+        }
+
+        private List<string> leave_sting_length_large_than_one(List<string> with_a_char)
+        {
+            List<string> sting_length_large_than_one = new List<string>();
+            foreach (string str in with_a_char)
+            {
+                if(str.Trim(new Char[] { '-' }).Length > 1)
+                    sting_length_large_than_one.Add(str.Trim());
+            }
+
+            return sting_length_large_than_one;
+        }
+
+        private List<string> handle_complex_artical_to_pure_list(string file_name)
+        {
+            string source_file = file_name;
+            Encoding currentEncoding;
+            using (var reader = new System.IO.StreamReader(source_file, true))
+            {
+                currentEncoding = reader.CurrentEncoding;
+            }
+            string[] complex_line = System.IO.File.ReadAllLines(source_file, currentEncoding);
+            List<string> pure_list_without_valid_char = leave_the_valid_char(complex_line);
+            List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
+            List<string> pure_list_without_duplicate = remove_the_duplicate_word(pure_list_split_to_single_word);
+            List<string> pure_list_with_long_sting_length = leave_sting_length_large_than_one(pure_list_without_duplicate);
+
+            pure_list_with_long_sting_length.Sort();
+            List<string> pure_list = pure_list_with_long_sting_length;
+            return pure_list;
+        }
+
+        private void pure_list_to_voc_list(List<string> pure_list, List<voc_object> voc_source)
+        {
+            string[] linesssss = pure_list.ToArray();
+
+            for (int i = 0; i < linesssss.Length; i++)
+            {
+                string line = linesssss[i].Trim();
+
+                if (line.Length != 0)
+                {
+                    voc_source.Add(new voc_object(line, DateTime.Now.ToString("yyyy'/'MM'/'dd"), line, 0));
                 }
             }
         }
@@ -418,6 +498,12 @@ namespace convert_article_to_voc_list
             try
             {
                 get_int = Int32.Parse(textBox3.Text);
+
+                if (get_int > 25000)
+                {
+                    textBox3.Text = "25000";
+                    get_int = 25000;
+                }
             }
             catch(Exception ee)
             {

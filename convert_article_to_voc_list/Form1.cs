@@ -523,5 +523,10 @@ namespace convert_article_to_voc_list
         {
             Process.Start(e.Link.LinkData as string);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Process.Start(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+        }
     }
 }

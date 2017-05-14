@@ -40,12 +40,12 @@
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.button1.Font = new System.Drawing.Font("微軟正黑體", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.button1.Location = new System.Drawing.Point(348, 81);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(298, 51);
             this.button1.TabIndex = 0;
-            this.button1.Text = "start";
+            this.button1.Text = "開始轉換";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -60,18 +60,18 @@
             // 
             // button2
             // 
-            this.button2.Font = new System.Drawing.Font("微軟正黑體", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.button2.Font = new System.Drawing.Font("微軟正黑體", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.button2.Location = new System.Drawing.Point(348, 25);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(298, 51);
             this.button2.TabIndex = 2;
-            this.button2.Text = "init";
+            this.button2.Text = "初始化";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(348, 141);
+            this.textBox2.Location = new System.Drawing.Point(348, 148);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
@@ -82,7 +82,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(470, 141);
+            this.textBox3.Location = new System.Drawing.Point(470, 148);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(176, 31);
@@ -93,7 +93,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(579, 221);
+            this.linkLabel1.Location = new System.Drawing.Point(579, 212);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(67, 15);
             this.linkLabel1.TabIndex = 5;
@@ -128,7 +128,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "convert_article_to_voc_list (MvQdict)";
+            this.Text = "convert articles to the list of vocabulary list (MvQdict)";
             this.ResumeLayout(false);
             this.PerformLayout();
 

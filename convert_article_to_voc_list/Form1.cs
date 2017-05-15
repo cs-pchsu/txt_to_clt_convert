@@ -34,6 +34,7 @@ namespace convert_article_to_voc_list
         private const string input_txt_folder = "input_txt";
         private const string out_clt_folder = "out_clt";
         private const int default_max_element = 5000;
+        private const string sft_ver = "Version 1.0";
         private int max_element = default_max_element;
         private void set_max_element(int max)
         {
@@ -79,7 +80,7 @@ namespace convert_article_to_voc_list
                 send_msg(out_clt_folder + " folder , Created !");
             }
 
-            send_msg("初始化完畢 !");
+            send_msg(sft_ver + " : 初始化完畢 !");
         }
 
         private int process_count = 0;
@@ -201,7 +202,9 @@ namespace convert_article_to_voc_list
             List<string> line_with_valid_char = new List<string>();
             foreach (string messyText in complex_line)
             {
-                string pure = Regex.Replace(messyText, @"[^a-zA-Z\s\x2C\x2D]", "").Trim();
+                string pure = Regex.Replace(messyText, @"[^a-zA-Z\s\x21\x22\x23\x24\x25\x26\x27\x28\x29
+                                                            \x2A\x2B\x2C\x2D\x2E\x2F\x3A\x3B\x3C\x3D\x3E\x3F\x40
+                                                            \x5B\x5C\x5D\x5E\x5F\x60\x7B\x7C\x7D\x7E]", "").Trim();
                 if(pure.Length > 0)
                     line_with_valid_char.Add(pure);
             }
@@ -214,7 +217,9 @@ namespace convert_article_to_voc_list
             List<string> line_with_single_word = new List<string>();
             foreach (string messyText in multi_words)
             {
-                string[] delimiter = new string[] { " ", ",", "\t"};
+                string[] delimiter = new string[] { " ", ",", "\t", "!", "\"", "#", "$", "%", "&", "'", "(", ")"
+                , "*", "+", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", @"\", "]", "^", "_"
+                , "`", "{", "|", "}", "~"};
                 string[] tokens = messyText.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                 foreach(string s in tokens)
                     line_with_single_word.Add(s);
@@ -234,8 +239,9 @@ namespace convert_article_to_voc_list
             List<string> sting_length_large_than_one = new List<string>();
             foreach (string str in with_a_char)
             {
-                if(str.Trim(new Char[] { '-' }).Length > 1)
-                    sting_length_large_than_one.Add(str.Trim());
+                string result = str.Trim().Trim(new Char[] { '-' });
+                if (result.Length > 1)
+                    sting_length_large_than_one.Add(result);
             }
 
             return sting_length_large_than_one;
@@ -252,11 +258,11 @@ namespace convert_article_to_voc_list
             string[] complex_line = System.IO.File.ReadAllLines(source_file, currentEncoding);
             List<string> pure_list_without_valid_char = leave_the_valid_char(complex_line);
             List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
-            List<string> pure_list_without_duplicate = remove_the_duplicate_word(pure_list_split_to_single_word);
-            List<string> pure_list_with_long_sting_length = leave_sting_length_large_than_one(pure_list_without_duplicate);
+            List<string> pure_list_with_long_sting_length = leave_sting_length_large_than_one(pure_list_split_to_single_word);
+            List<string> pure_list_without_duplicate = remove_the_duplicate_word(pure_list_with_long_sting_length);
 
-            pure_list_with_long_sting_length.Sort();
-            List<string> pure_list = pure_list_with_long_sting_length;
+            pure_list_without_duplicate.Sort();
+            List<string> pure_list = pure_list_without_duplicate;
             return pure_list;
         }
 

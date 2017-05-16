@@ -48,6 +48,10 @@ namespace convert_article_to_voc_list
             LinkLabel.Link link = new LinkLabel.Link();
             link.LinkData = "http://pchsu-blog.blogspot.tw/2017/05/blog-post.html";
             linkLabel1.Links.Add(link);
+
+            LinkLabel.Link link2 = new LinkLabel.Link();
+            link2.LinkData = "http://pc-hsu.blogspot.tw/2013/03/blog-post.html";
+            linkLabel2.Links.Add(link2);
             folder_init();
             textBox3.Text = default_max_element.ToString();
         }
@@ -533,6 +537,11 @@ namespace convert_article_to_voc_list
         private void button3_Click(object sender, EventArgs e)
         {
             Process.Start(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(e.Link.LinkData as string);
         }
     }
 }

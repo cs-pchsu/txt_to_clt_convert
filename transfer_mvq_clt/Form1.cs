@@ -47,6 +47,10 @@ namespace transfer_mvq_clt
             LinkLabel.Link link = new LinkLabel.Link();
             link.LinkData = "http://pchsu-blog.blogspot.tw/2016/05/clt.html";
             linkLabel1.Links.Add(link);
+
+            LinkLabel.Link link2 = new LinkLabel.Link();
+            link2.LinkData = "http://pc-hsu.blogspot.tw/2013/03/blog-post.html";
+            linkLabel2.Links.Add(link2);
             folder_init();
             textBox3.Text = default_max_element.ToString();
         }
@@ -418,13 +422,19 @@ namespace transfer_mvq_clt
             try
             {
                 get_int = Int32.Parse(textBox3.Text);
+
+                if (get_int > 25000)
+                {
+                    textBox3.Text = "25000";
+                    get_int = 25000;
+                }
             }
-            catch(Exception ee)
+            catch (Exception ee)
             {
                 has_error = true;
             }
 
-            if(get_int < 1)
+            if (get_int < 1)
                 has_error = true;
 
             if (has_error)
@@ -434,6 +444,16 @@ namespace transfer_mvq_clt
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(e.Link.LinkData as string);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Process.Start(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(e.Link.LinkData as string);
         }

@@ -36,6 +36,7 @@ namespace convert_article_to_voc_list
         private const int default_max_element = 5000;
         private const string sft_ver = "Version 1.0";
         private int max_element = default_max_element;
+        private string[] original_text = new string[] { };
         private void set_max_element(int max)
         {
             max_element = max;
@@ -54,6 +55,8 @@ namespace convert_article_to_voc_list
             linkLabel2.Links.Add(link2);
             folder_init();
             textBox3.Text = default_max_element.ToString();
+
+            this.checkBox1.Checked = true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -63,9 +66,13 @@ namespace convert_article_to_voc_list
             MessageBox.Show("OK");
         }
 
-        void send_msg(string msg)
+        void send_msg(string msg, bool clean)
         {
-            textBox1.Text += msg + "\r\n";
+            if(!clean)
+                textBox1.Text += msg + "\r\n";
+            else
+                textBox1.Text = msg;
+
         }
 
         private void folder_init()
@@ -75,16 +82,16 @@ namespace convert_article_to_voc_list
             if (false == Directory.Exists(input_txt_folder))
             {
                 System.IO.Directory.CreateDirectory(input_txt_folder);
-                send_msg(input_txt_folder + " folder , Created !");
+                send_msg(input_txt_folder + " folder , Created !", false);
             }
 
             if (false == Directory.Exists(out_clt_folder))
             {
                 System.IO.Directory.CreateDirectory(out_clt_folder);
-                send_msg(out_clt_folder + " folder , Created !");
+                send_msg(out_clt_folder + " folder , Created !", false);
             }
 
-            send_msg(sft_ver + " : 初始化完畢 !");
+            send_msg(sft_ver + " : 初始化完畢 !", false);
         }
 
         private int process_count = 0;
@@ -104,7 +111,7 @@ namespace convert_article_to_voc_list
         {
             process_init();
             string[] input_txt_array = Directory.GetFiles(input_txt_folder);
-            send_msg("要處理檔案數量 : " + input_txt_array.Length);
+            send_msg("要處理檔案數量 : " + input_txt_array.Length, false);
 
             foreach (string input_file in input_txt_array)
             {
@@ -125,11 +132,11 @@ namespace convert_article_to_voc_list
                 process_count++;
                 if (is_error)
                 {
-                    send_msg(process_count + " " + input_file + " : FAIL");
+                    send_msg(process_count + " " + input_file + " : FAIL", false);
                 }
                 else
                 {
-                    send_msg(process_count + " " + input_file + " : SUCCESS");
+                    send_msg(process_count + " " + input_file + " : SUCCESS", false);
                 }
             }
         }
@@ -160,45 +167,6 @@ namespace convert_article_to_voc_list
         private void write_to_mvq(string filename, List<voc_object> voc_write_list)
         {
             mvq_write_clt_file(voc_write_list, filename + ".clt");
-        }
-
-        private void file_to_list(string file_name, List<voc_object> voc_source)
-        {
-            string source_file = file_name;
-            Encoding currentEncoding;
-            using (var reader = new System.IO.StreamReader(source_file, true))
-            {
-               currentEncoding = reader.CurrentEncoding;
-            }
-            string[] linesssss = System.IO.File.ReadAllLines(source_file, currentEncoding);
-
-            for (int i = 0; i < linesssss.Length; i++)
-            {
-                string line = linesssss[i].Trim();
-
-                if (line.Length != 0)
-                {
-                    string voc = line;
-                    string context = "";
-                    for (i++; i < linesssss.Length; i++)
-                    {
-                        string remain = linesssss[i].Trim();
-                        if (remain.Length == 0)
-                            break; //the new vocabulary prepare to enter
-
-                        context += remain + "\r\n";
-                    }
-
-                    context = context.Trim();
-
-                    if (context.Length > 0)
-                        context = voc + " = " + context;
-                    else
-                        context = voc;
-
-                    voc_source.Add(new voc_object(voc, DateTime.Now.ToString("yyyy'/'MM'/'dd"), context, 0));
-                }
-            }
         }
 
         private List<string> leave_the_valid_char(string[] complex_line)
@@ -259,8 +227,8 @@ namespace convert_article_to_voc_list
             {
                 currentEncoding = reader.CurrentEncoding;
             }
-            string[] complex_line = System.IO.File.ReadAllLines(source_file, currentEncoding);
-            List<string> pure_list_without_valid_char = leave_the_valid_char(complex_line);
+            original_text = System.IO.File.ReadAllLines(source_file, currentEncoding);
+            List<string> pure_list_without_valid_char = leave_the_valid_char(original_text);
             List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
             List<string> pure_list_with_long_sting_length = leave_sting_length_large_than_one(pure_list_split_to_single_word);
             List<string> pure_list_without_duplicate = remove_the_duplicate_word(pure_list_with_long_sting_length);
@@ -276,11 +244,46 @@ namespace convert_article_to_voc_list
 
             for (int i = 0; i < linesssss.Length; i++)
             {
+                send_msg((i + 1) + " / " + linesssss.Length, true);
+                this.Refresh();
                 string line = linesssss[i].Trim();
+                string context = line;
 
                 if (line.Length != 0)
                 {
-                    voc_source.Add(new voc_object(line, DateTime.Now.ToString("yyyy'/'MM'/'dd"), line, 0));
+                    if(this.checkBox1.Checked)
+                    {
+                        int line_count = 0;
+                        foreach(string o_line in original_text)
+                        {
+                            if(o_line.Trim().Length > 0)
+                            {
+                                string [] a_line = new string[] { o_line };
+                                List<string> pure_list_without_valid_char = leave_the_valid_char(a_line);
+                                List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
+                                bool is_get = false;
+                                foreach (string word in pure_list_split_to_single_word)
+                                {
+                                    if (word.Equals(line, StringComparison.CurrentCultureIgnoreCase))
+                                    {
+                                        is_get = true;
+                                        break;
+                                    }
+                                }
+                                if (is_get)
+                                {
+                                    line_count++;
+                                    if (line_count == 1)
+                                    {
+                                        context += " = ";
+                                    }
+                                    string start = "######## " + line_count.ToString() + " ########\r\n";
+                                    context += start + o_line.Trim().Replace("=", "＝") + "\r\n";
+                                }
+                            }
+                        }
+                    }
+                    voc_source.Add(new voc_object(line, DateTime.Now.ToString("yyyy'/'MM'/'dd"), context, 0));
                 }
             }
         }

@@ -141,7 +141,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "convert specified texts to the list of vocabulary list (MvQdict)";
+            this.Text = "convert articles to the list of vocabulary list (MvQdict)";
             this.ResumeLayout(false);
             this.PerformLayout();
 

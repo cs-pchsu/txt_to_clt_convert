@@ -37,6 +37,7 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button3 = new System.Windows.Forms.Button();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -56,7 +57,8 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(330, 229);
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(330, 243);
             this.textBox1.TabIndex = 1;
             // 
             // button2
@@ -72,7 +74,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(348, 148);
+            this.textBox2.Location = new System.Drawing.Point(348, 167);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
@@ -83,7 +85,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(470, 148);
+            this.textBox3.Location = new System.Drawing.Point(470, 167);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(176, 31);
@@ -94,7 +96,7 @@
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(579, 194);
+            this.linkLabel1.Location = new System.Drawing.Point(579, 213);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(67, 15);
             this.linkLabel1.TabIndex = 5;
@@ -105,7 +107,7 @@
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("微軟正黑體", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button3.Location = new System.Drawing.Point(348, 185);
+            this.button3.Location = new System.Drawing.Point(348, 204);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(208, 51);
             this.button3.TabIndex = 6;
@@ -116,7 +118,7 @@
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Location = new System.Drawing.Point(560, 216);
+            this.linkLabel2.Location = new System.Drawing.Point(560, 235);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(88, 15);
             this.linkLabel2.TabIndex = 7;
@@ -124,11 +126,23 @@
             this.linkLabel2.Text = "MvQdict網頁";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.ForeColor = System.Drawing.Color.Blue;
+            this.checkBox1.Location = new System.Drawing.Point(523, 140);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(119, 19);
+            this.checkBox1.TabIndex = 8;
+            this.checkBox1.Text = "保留原擋文字";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(658, 253);
+            this.ClientSize = new System.Drawing.Size(658, 263);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.linkLabel1);
@@ -157,6 +171,7 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

@@ -69,7 +69,7 @@ namespace convert_article_to_voc_list
         void send_msg(string msg, bool clean)
         {
             if(!clean)
-                textBox1.Text += msg + "\r\n";
+                textBox1.Text += msg;
             else
                 textBox1.Text = msg;
 
@@ -82,16 +82,16 @@ namespace convert_article_to_voc_list
             if (false == Directory.Exists(input_txt_folder))
             {
                 System.IO.Directory.CreateDirectory(input_txt_folder);
-                send_msg(input_txt_folder + " folder , Created !", false);
+                send_msg(input_txt_folder + " folder , Created !\r\n", false);
             }
 
             if (false == Directory.Exists(out_clt_folder))
             {
                 System.IO.Directory.CreateDirectory(out_clt_folder);
-                send_msg(out_clt_folder + " folder , Created !", false);
+                send_msg(out_clt_folder + " folder , Created !\r\n", false);
             }
 
-            send_msg(sft_ver + " : 初始化完畢 !", false);
+            send_msg(sft_ver + " : 初始化完畢 !\r\n", false);
         }
 
         private int process_count = 0;
@@ -111,8 +111,10 @@ namespace convert_article_to_voc_list
         {
             process_init();
             string[] input_txt_array = Directory.GetFiles(input_txt_folder);
-            send_msg("要處理檔案數量 : " + input_txt_array.Length, false);
+            send_msg("要處理檔案數量 : " + input_txt_array.Length + "\r\n", false);
 
+
+            string process_file_info = "";
             foreach (string input_file in input_txt_array)
             {
                 bool is_error = false;
@@ -132,12 +134,15 @@ namespace convert_article_to_voc_list
                 process_count++;
                 if (is_error)
                 {
-                    send_msg(process_count + " " + input_file + " : FAIL", false);
+                    process_file_info += process_count + ". " + input_file + " : FAIL\r\n";
+                    
                 }
                 else
                 {
-                    send_msg(process_count + " " + input_file + " : SUCCESS", false);
+                    process_file_info += process_count + ". " + input_file + " : SUCCESS\r\n";
                 }
+
+                send_msg(process_file_info, false);
             }
         }
 
@@ -244,7 +249,8 @@ namespace convert_article_to_voc_list
 
             for (int i = 0; i < linesssss.Length; i++)
             {
-                send_msg((i + 1) + " / " + linesssss.Length, true);
+                send_msg((i + 1) + " / " + linesssss.Length + "\r\n", true);
+                System.Windows.Forms.Application.DoEvents();
                 this.Refresh();
                 string line = linesssss[i].Trim();
                 string context = line;

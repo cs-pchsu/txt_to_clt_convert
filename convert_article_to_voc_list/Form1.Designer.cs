@@ -156,6 +156,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "convert articles to the list of vocabulary (MvQdict)";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -11,10 +11,19 @@ using System.Web.Script.Serialization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Collections;
+using System.Threading;
 
 namespace convert_article_to_voc_list
 {
-    public struct voc_object
+    public struct smart_search_info
+    {
+        public int search_start;
+        public int search_end;
+        public ArrayList search_list;
+    }
+
+    public struct voc_object : IComparable<voc_object>
     {
         public voc_object(string _voc, string _date, string _context, int _isMark)
         {
@@ -27,6 +36,11 @@ namespace convert_article_to_voc_list
         public string date;
         public string context;
         public int isMark;
+
+        public int CompareTo(voc_object voc)
+        {
+            return - String.Compare(voc.voc, this.voc, true);
+        }
     }
 
     public partial class Form1 : Form
@@ -34,9 +48,11 @@ namespace convert_article_to_voc_list
         private const string input_txt_folder = "input_txt";
         private const string out_clt_folder = "out_clt";
         private const int default_max_element = 5000;
-        private const string sft_ver = "Version 1.0";
+        private const string sft_ver = "Version 1.1";
         private int max_element = default_max_element;
         private string[] original_text = new string[] { };
+        private int max_smart_merge_thread_count = Environment.ProcessorCount * 2;
+
         private void set_max_element(int max)
         {
             max_element = max;
@@ -73,6 +89,8 @@ namespace convert_article_to_voc_list
             else
                 textBox1.Text = msg;
 
+            System.Windows.Forms.Application.DoEvents();
+            this.Refresh();
         }
 
         private void folder_init()
@@ -122,9 +140,9 @@ namespace convert_article_to_voc_list
                 {
                     List<string> pure_list;
                     pure_list = handle_complex_artical_to_pure_list(input_file);
-                    List<voc_object> voc_source = new List<voc_object>();
-                    pure_list_to_voc_list(pure_list, voc_source);;
-                    split_write_to_mvq(out_clt_folder + "/" + Path.GetFileNameWithoutExtension(input_file), voc_source);
+                    multithread_article_analysis(pure_list);
+                    prepared_list.Sort();
+                    split_write_to_mvq(out_clt_folder + "/" + Path.GetFileNameWithoutExtension(input_file), prepared_list);
                 }
                 catch(Exception e)
                 {
@@ -237,61 +255,189 @@ namespace convert_article_to_voc_list
             List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
             List<string> pure_list_with_long_sting_length = leave_sting_length_large_than_one(pure_list_split_to_single_word);
             List<string> pure_list_without_duplicate = remove_the_duplicate_word(pure_list_with_long_sting_length);
-
-            pure_list_without_duplicate.Sort();
             List<string> pure_list = pure_list_without_duplicate;
             return pure_list;
         }
 
-        private void pure_list_to_voc_list(List<string> pure_list, List<voc_object> voc_source)
+        public static readonly object control_merge_system = new object();
+        private int smart_merge_thread_count = 0;
+        private int merge_process_count = 0;
+        private bool execute_all_thread = true;
+        public bool mgr_execute_all_thread
         {
-            string[] linesssss = pure_list.ToArray();
-
-            for (int i = 0; i < linesssss.Length; i++)
+            set
             {
-                send_msg((i + 1) + " / " + linesssss.Length + "\r\n", true);
-                System.Windows.Forms.Application.DoEvents();
-                this.Refresh();
-                string line = linesssss[i].Trim();
-                string context = line;
-
-                if (line.Length != 0)
+                lock (control_merge_system)
                 {
-                    if(this.checkBox1.Checked)
+                    execute_all_thread = value;
+                }
+            }
+
+            get
+            {
+                lock (control_merge_system)
+                {
+                    return execute_all_thread;
+                }
+            }
+        }
+        public int mgr_merge_process_count
+        {
+            set
+            {
+                lock (control_merge_system)
+                {
+                    merge_process_count = value;
+                }
+            }
+
+            get
+            {
+                lock (control_merge_system)
+                {
+                    return merge_process_count;
+                }
+            }
+        }
+        public int mgr_smart_merge_thread_count
+        {
+            set
+            {
+                lock (control_merge_system)
+                {
+                    smart_merge_thread_count = value;
+                }
+            }
+
+            get
+            {
+                lock (control_merge_system)
+                {
+                    return smart_merge_thread_count;
+                }
+            }
+        }
+
+        public void smart_search_worker(object parameterObject)
+        {
+            smart_search_info search_info = (smart_search_info)parameterObject;
+            int start = search_info.search_start;
+            int end = search_info.search_end;
+            List<voc_object> local_result = new List<voc_object>();
+            ArrayList search_list = search_info.search_list;
+            try
+            {
+                for (int i = start; i < end && mgr_execute_all_thread; i++)
+                {
+                    mgr_merge_process_count++;
+                    string line = (string)search_list[i];
+                    string context = line;
+
+                    if (line.Length != 0)
                     {
-                        int line_count = 0;
-                        foreach(string o_line in original_text)
+                        if (this.checkBox1.Checked)
                         {
-                            if(o_line.Trim().Length > 0)
+                            int line_count = 0;
+                            foreach (string o_line in original_text)
                             {
-                                string [] a_line = new string[] { o_line };
-                                List<string> pure_list_without_valid_char = leave_the_valid_char(a_line);
-                                List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
-                                bool is_get = false;
-                                foreach (string word in pure_list_split_to_single_word)
+                                if (o_line.Trim().Length > 0)
                                 {
-                                    if (word.Trim().Trim(new Char[] { '-' }).Equals(line, StringComparison.CurrentCultureIgnoreCase))
+                                    string[] a_line = new string[] { o_line };
+                                    List<string> pure_list_without_valid_char = leave_the_valid_char(a_line);
+                                    List<string> pure_list_split_to_single_word = split_to_single_word(pure_list_without_valid_char);
+                                    bool is_get = false;
+                                    foreach (string word in pure_list_split_to_single_word)
                                     {
-                                        is_get = true;
-                                        break;
+                                        if (word.Trim().Trim(new Char[] { '-' }).Equals(line, StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            is_get = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (is_get)
-                                {
-                                    line_count++;
-                                    if (line_count == 1)
+                                    if (is_get)
                                     {
-                                        context += " = ";
+                                        line_count++;
+                                        if (line_count == 1)
+                                        {
+                                            context += " = ";
+                                        }
+                                        string start_str = "######## " + line_count.ToString() + " ########\r\n";
+                                        context += start_str + o_line.Trim().Replace("=", "＝") + "\r\n";
                                     }
-                                    string start = "######## " + line_count.ToString() + " ########\r\n";
-                                    context += start + o_line.Trim().Replace("=", "＝") + "\r\n";
                                 }
                             }
                         }
+                        local_result.Add(new voc_object(line, DateTime.Now.ToString("yyyy'/'MM'/'dd"), context, 0));
                     }
-                    voc_source.Add(new voc_object(line, DateTime.Now.ToString("yyyy'/'MM'/'dd"), context, 0));
+                }
+
+                lock (control_merge_system)
+                {
+                    prepared_list.AddRange(local_result);
                 }
             }
+            catch (Exception e) { }
+            finally
+            {
+                lock (control_merge_system)
+                {
+                    mgr_smart_merge_thread_count--;
+                }
+            }
+
+        }
+
+        private void UI_disable()
+        {
+            this.button1.Enabled = false;
+            this.button2.Enabled = false;
+        }
+
+        private void UI_enable()
+        {
+            this.button1.Enabled = true;
+            this.button2.Enabled = true;
+        }
+
+        private List<voc_object> prepared_list = new List<voc_object>();
+        private void multithread_article_analysis(List<string> pure_list)
+        {
+            ArrayList target_search = new ArrayList(pure_list);
+            prepared_list = new List<voc_object>();
+            mgr_merge_process_count = 0;
+            mgr_smart_merge_thread_count = max_smart_merge_thread_count;
+            int start_idx = 0, end_idx = 0;
+            int total_count = target_search.Count;
+            int scale = total_count / max_smart_merge_thread_count;
+            int remain = total_count % max_smart_merge_thread_count;
+            for (int i = 0; i < max_smart_merge_thread_count; i++)
+            {
+                start_idx = i * scale;
+                end_idx = start_idx + scale;
+                if (i == max_smart_merge_thread_count - 1)
+                {
+                    end_idx += remain;
+                }
+                smart_search_info tmp_smart_search_info = new smart_search_info();
+                tmp_smart_search_info.search_start = start_idx;
+                tmp_smart_search_info.search_end = end_idx;
+                tmp_smart_search_info.search_list = target_search;
+
+                ThreadPool.QueueUserWorkItem(new WaitCallback(smart_search_worker), tmp_smart_search_info);
+            }
+
+            UI_disable();
+            while (true)
+            {
+                if (mgr_smart_merge_thread_count == 0 ||
+                    mgr_execute_all_thread == false)
+                    break;
+
+                send_msg(mgr_merge_process_count.ToString() + " / " + pure_list.Count.ToString() + "\r\n", true);
+                Thread.Sleep(100);
+            }
+            send_msg(mgr_merge_process_count.ToString() + " / " + pure_list.Count.ToString() + "\r\n", true);
+            UI_enable();
         }
 
         char[] array1 = { 'p', 'c', 'h', 's', 'u', 'm', 'v', 'q' };
@@ -553,6 +699,11 @@ namespace convert_article_to_voc_list
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start(e.Link.LinkData as string);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            mgr_execute_all_thread = false;
         }
     }
 }

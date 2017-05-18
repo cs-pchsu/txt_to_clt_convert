@@ -382,6 +382,7 @@ namespace transfer_mvq_clt
             if (result.Length == 0)
                 result = "[]";
             JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.MaxJsonLength = Int32.MaxValue;
             tmp = serializer.Deserialize<List<voc_object>>(result);
             reader.Close();
             return tmp;
@@ -391,6 +392,7 @@ namespace transfer_mvq_clt
         public void mvq_write_clt_file(List<voc_object> tmp, string filename)
         {
             var jsonSerialiser = new JavaScriptSerializer();
+            jsonSerialiser.MaxJsonLength = Int32.MaxValue;
             string json = jsonSerialiser.Serialize(tmp);
             EncryptFile(json, filename);
         }

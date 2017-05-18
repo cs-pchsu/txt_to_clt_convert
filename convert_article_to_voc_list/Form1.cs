@@ -270,7 +270,7 @@ namespace convert_article_to_voc_list
                                 bool is_get = false;
                                 foreach (string word in pure_list_split_to_single_word)
                                 {
-                                    if (word.Equals(line, StringComparison.CurrentCultureIgnoreCase))
+                                    if (word.Trim().Trim(new Char[] { '-' }).Equals(line, StringComparison.CurrentCultureIgnoreCase))
                                     {
                                         is_get = true;
                                         break;
@@ -477,6 +477,7 @@ namespace convert_article_to_voc_list
             if (result.Length == 0)
                 result = "[]";
             JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.MaxJsonLength = Int32.MaxValue;
             tmp = serializer.Deserialize<List<voc_object>>(result);
             reader.Close();
             return tmp;
@@ -486,6 +487,7 @@ namespace convert_article_to_voc_list
         public void mvq_write_clt_file(List<voc_object> tmp, string filename)
         {
             var jsonSerialiser = new JavaScriptSerializer();
+            jsonSerialiser.MaxJsonLength = Int32.MaxValue;
             string json = jsonSerialiser.Serialize(tmp);
             EncryptFile(json, filename);
         }

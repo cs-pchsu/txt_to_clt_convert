@@ -391,12 +391,16 @@ namespace convert_article_to_voc_list
         {
             this.button1.Enabled = false;
             this.button2.Enabled = false;
+            this.checkBox1.Enabled = false;
+            this.textBox3.Enabled = false;
         }
 
         private void UI_enable()
         {
             this.button1.Enabled = true;
             this.button2.Enabled = true;
+            this.checkBox1.Enabled = true;
+            this.textBox3.Enabled = true;
         }
 
         private List<voc_object> prepared_list = new List<voc_object>();

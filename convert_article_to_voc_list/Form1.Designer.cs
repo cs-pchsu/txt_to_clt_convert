@@ -134,7 +134,7 @@
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(119, 19);
             this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "保留原擋文字";
+            this.checkBox1.Text = "保留原檔文字";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // Form1

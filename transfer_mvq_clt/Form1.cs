@@ -31,8 +31,8 @@ namespace transfer_mvq_clt
 
     public partial class Form1 : Form
     {
-        private const string input_txt_folder = "input_txt";
-        private const string out_clt_folder = "out_clt";
+        private const string input_txt_folder = "specified_to_list_input";
+        private const string out_clt_folder = "specified_to_list_output";
         private const int default_max_element = 5000;
         private int max_element = default_max_element;
         private void set_max_element(int max)

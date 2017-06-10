@@ -45,8 +45,8 @@ namespace convert_article_to_voc_list
 
     public partial class Form1 : Form
     {
-        private const string input_txt_folder = "input_txt";
-        private const string out_clt_folder = "out_clt";
+        private const string input_txt_folder = "article_to_list_input";
+        private const string out_clt_folder = "article_to_list_output";
         private const int default_max_element = 5000;
         private const string sft_ver = "Version 1.1";
         private int max_element = default_max_element;
